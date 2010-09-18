@@ -1,23 +1,54 @@
 require 'module/swing'
 require 'module/awt'
-require 'controller/login_window_controller'
 
 class LoginWindow < Swing::JFrame
+  LOGIN_BUTTON_ACTION = 'Login'
+  CANCEL_BUTTON_ACTION = 'Cancel'
   WIN_WIDTH = 350
   WIN_HEIGHT = 200
 
-  def initialize(name)
+  def initialize(model, controller, name)
     super name
+
+    @model = model
+    @controller = controller
+
+    @username_label    = UsernameLabel.new
+    @username_textbox  = UsernameTextBox.new
+    @password_label    = PasswordLabel.new
+    @password_textbox  = PasswordTextBox.new
+    @login_button      = LoginButton.new
+    @cancel_button     = CancelButton.new
+
     set_default_close_operation(Swing::JFrame::EXIT_ON_CLOSE)
     set_layout LoginLayout.new
     set_size(WIN_WIDTH,WIN_HEIGHT)
+    add_components
+    set_event_listeners
+  end
 
-    add UsernameLabel.new
-    add UsernameTextBox.new
-    add PasswordLabel.new
-    add PasswordTextBox.new
-    add LoginButton.new
-    add CancelButton.new
+  def login_button_action
+    LOGIN_BUTTON_ACTION
+  end
+
+  def cancel_button_action
+    CANCEL_BUTTON_ACTION
+  end
+
+  def add_components
+    add @username_label
+    add @username_textbox
+    add @password_label
+    add @password_textbox
+    add @login_button
+    add @cancel_button
+  end
+
+  def set_event_listeners
+    @login_button.set_action_command LOGIN_BUTTON_ACTION
+    @login_button.add_action_listener @controller
+    @cancel_button.set_action_command CANCEL_BUTTON_ACTION
+    @cancel_button.add_action_listener @controller
   end
 
   def show_me
