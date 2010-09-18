@@ -8,6 +8,6 @@ class MainWindow < Swing::JFrame
 
   def show_me
     pack
-    set_visible(true)
+    set_visible true
   end
 end
