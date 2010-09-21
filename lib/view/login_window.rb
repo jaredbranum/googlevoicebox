@@ -7,10 +7,10 @@ class LoginWindow < Swing::JFrame
   WIN_WIDTH = 350
   WIN_HEIGHT = 200
 
-  def initialize(model, controller, name)
+  def initialize(controller, name)
     super name
 
-    @model = model
+    #@model = model
     @controller = controller
 
     @username_label    = UsernameLabel.new
@@ -35,6 +35,27 @@ class LoginWindow < Swing::JFrame
     CANCEL_BUTTON_ACTION
   end
 
+  def username_text
+    @username_textbox.text
+  end
+
+  def password_text
+    @password_textbox.text
+  end
+
+  def enable_buttons
+    set_buttons true
+  end
+  
+  def disable_buttons
+    set_buttons false
+  end
+
+  def set_buttons(bool)
+    @login_button.enabled = bool
+    @cancel_button.enabled = bool
+  end
+
   def add_components
     add @username_label
     add @username_textbox
@@ -45,14 +66,16 @@ class LoginWindow < Swing::JFrame
   end
 
   def set_event_listeners
-    @login_button.set_action_command LOGIN_BUTTON_ACTION
     @login_button.add_action_listener @controller
-    @cancel_button.set_action_command CANCEL_BUTTON_ACTION
     @cancel_button.add_action_listener @controller
   end
 
   def show_me
     set_visible true
+  end
+
+  def show_login_failed
+    LoginFailedAlert.show_message_dialog(self)
   end
 
   # this layout sucks, but it's usable for now
@@ -84,12 +107,25 @@ class LoginWindow < Swing::JFrame
   class LoginButton < Swing::JButton
     def initialize
       super "Login"
+      set_action_command LOGIN_BUTTON_ACTION
     end
   end
 
   class CancelButton < Swing::JButton
     def initialize
       super "Cancel"
+      set_action_command CANCEL_BUTTON_ACTION
+    end
+  end
+
+  class LoginFailedAlert < Swing::JOptionPane
+    def self.show_message_dialog(frame)
+      super(
+        frame,
+        "There was a problem logging in to your Google account",
+        "Login Failed",
+        self::ERROR_MESSAGE
+      )
     end
   end
 end
